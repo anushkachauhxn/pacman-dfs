@@ -3,11 +3,13 @@ import os
 import numpy as np
 from queue import LifoQueue
 
-fringe = LifoQueue()
+grid = []
 pacmanPath = []
+foodFound = False
+fringe = LifoQueue()
 
 
-def pushFringes(x, y, vis, grid):
+def pushFringes(x, y, vis):
     # possible fringes = [left, down, right, up]
     coords = [[x, y-1], [x+1, y], [x, y+1], [x-1, y]]
     for i in range(4):
@@ -17,9 +19,11 @@ def pushFringes(x, y, vis, grid):
                 (vis[newX][newY] == 0) and
                 (grid[newX][newY] != 0)):
             fringe.put([newX, newY])
+            print("PUSH", newX, newY)
 
 
-def dfsTravel(x, y, vis, grid):
+def dfsTravel(x, y, vis):
+    print("POP ", x, y)
     vis[x][y] = 1
     pacmanPath.append([x, y])
 
@@ -29,32 +33,30 @@ def dfsTravel(x, y, vis, grid):
         print("Food found at: ", x, y)
         return
 
-    pushFringes(x, y, vis, grid)
+    pushFringes(x, y, vis)
 
 
 def sortToGrid(lines):
-    grid = []
     for line in lines:
         row = list(map(int, line.split()))
         grid.append(row)
-    return grid
 
 
 def main():
     pacman = list(map(int, input().split()))
-    grid = sortToGrid(sys.stdin.readlines())
+    sortToGrid(sys.stdin.readlines())
+
+    global n, m
+    n = len(grid)
+    m = len(grid[0])
+    vis1 = np.zeros((n, m), dtype=int)
 
     fringe.put(pacman)
-
-    global n, m, foodFound
-    n = len(grid)  # num of rows = 8
-    m = len(grid[0])  # num of columns = 7
-    foodFound = False
-
-    vis1 = np.zeros((n, m), dtype=int)
     while (not fringe.empty() and not foodFound):
         next = fringe.get()
-        dfsTravel(next[0], next[1], vis1, grid)
+        dfsTravel(next[0], next[1], vis1)
+    if (not foodFound):
+        print("Food not found")
 
     print(pacmanPath)
 
