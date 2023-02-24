@@ -1,5 +1,7 @@
-from queue import LifoQueue
+import sys
+import os
 import numpy as np
+from queue import LifoQueue
 
 fringe = LifoQueue()
 pacmanPath = []
@@ -30,19 +32,18 @@ def dfsTravel(x, y, vis, grid):
     pushFringes(x, y, vis, grid)
 
 
+def sortToGrid(lines):
+    grid = []
+    for line in lines:
+        row = list(map(int, line.split()))
+        grid.append(row)
+    return grid
+
+
 def main():
-    # input
-    grid = [
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 1, 1, 1, 0],
-        [0, 1, 0, 0, 0, 1, 0],
-        [0, 1, 0, 2, 0, 1, 0],
-        [0, 1, 1, 1, 0, 1, 0],
-        [0, 1, 0, 0, 0, 1, 0],
-        [0, 1, 1, 1, 1, 1, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-    ]
-    pacman = [6, 1]
+    pacman = list(map(int, input().split()))
+    grid = sortToGrid(sys.stdin.readlines())
+
     fringe.put(pacman)
 
     global n, m, foodFound
@@ -59,4 +60,7 @@ def main():
 
 
 if __name__ == '__main__':
+    if not os.environ.get("ONLINE_JUDGE"):
+        sys.stdin = open('./input.txt', 'r')
+        sys.stdout = open('./output.txt', 'w')
     main()
