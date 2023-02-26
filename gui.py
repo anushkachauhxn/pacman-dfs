@@ -7,14 +7,18 @@ grid = [
     [0, 1, 1, 1, 1, 1, 0],
     [0, 1, 0, 0, 0, 1, 0],
     [0, 1, 0, 2, 0, 1, 0],
-    [0, 2, 0, 1, 0, 1, 0],
+    [0, 1, 1, 1, 0, 1, 0],
     [0, 1, 0, 0, 0, 1, 0],
     [0, 1, 1, 1, 1, 1, 0],
     [0, 0, 0, 0, 0, 0, 0],
 ]
 n = len(grid)  # n=8
 m = len(grid[0])  # n=7
-pacmanPath = [[6, 1], [5, 1], [4, 1]]
+pacmanPath = [[6, 1], [5, 1], [4, 1], [3, 1], [2, 1], [1, 1],
+              [1, 2], [1, 3], [1, 4], [1, 5],
+              [2, 5], [3, 5], [4, 5], [5, 5], [6, 5],
+              [6, 4], [6, 3], [6, 2],
+              [4, 2], [4, 3], [3, 3]]
 
 
 class Board(Frame):
@@ -29,25 +33,34 @@ class Board(Frame):
         canvas = Canvas(self)
 
         create_grid(canvas, n, m)  # grid maze
-        create_pacman(canvas, 6, 1)  # pacman image
-        canvas.pack(fill=BOTH, expand=1)
 
-        for i in range(1, len(pacmanPath)):
-            x = pacmanPath[i][0]
-            px = pacmanPath[i-1][0]
-            y = pacmanPath[i][1]
-            py = pacmanPath[i-1][1]
+        progress = 0
+        while (progress != len(pacmanPath)-1):
+            pacman = create_pacman(
+                canvas, pacmanPath[progress][0], pacmanPath[progress][1])
+            canvas.pack(fill=BOTH, expand=1)
 
-            if (x < px):
-                movePacman(canvas, 'up')  # x dec
-            elif (x > px):
-                movePacman(canvas, 'down')  # x inc
-            if (y < py):
-                movePacman(canvas, 'left')  # y dec
-            elif (y > py):
-                movePacman(canvas, 'right')  # y inc
-            self.master.update()
-            time.sleep(0.5)
+            for i in range(progress+1, len(pacmanPath)):
+                print(i)
+                x = pacmanPath[i][0]
+                px = pacmanPath[i-1][0]
+                y = pacmanPath[i][1]
+                py = pacmanPath[i-1][1]
+
+                if (x == px-1):
+                    movePacman(canvas, 'up')  # x dec
+                elif (x == px+1):
+                    movePacman(canvas, 'down')  # x inc
+                elif (y == py-1):
+                    movePacman(canvas, 'left')  # y dec
+                elif (y == py+1):
+                    movePacman(canvas, 'right')  # y inc
+                else:
+                    canvas.delete(pacman)
+                    break
+                self.master.update()
+                time.sleep(0.5)
+            progress = i
 
 
 def create_grid(canvas, n, m):
@@ -66,9 +79,8 @@ def create_grid(canvas, n, m):
 
 def create_pacman(canvas, y, x):
     # create pacman at position (x, y)
-    canvas.create_rectangle(50*x, 50*y,
-                            50*x+50, 50*y+50, tags="pacman", outline="#fff", fill="#fb0")
-    # pacman = Image.open("./pacman.png"); pacman = pacman.resize((47, 47), Image.ANTIALIAS); img = ImageTk.PhotoImage(pacman); label = tkinter.Label(image=img); label.image = img; label.place(x=pacmanPath[0][0], y=pacmanPath[0][1])
+    return canvas.create_rectangle(50*x, 50*y, 50*x+50, 50*y+50,
+                                   tags="pacman", outline="#fff", fill="#fb0")
 
 
 def movePacman(canvas, direction):
@@ -81,16 +93,6 @@ def movePacman(canvas, direction):
         canvas.move('pacman', -50, 0)
     elif (direction == 'right'):
         canvas.move('pacman', 50, 0)
-
-
-def move_pacman(window, canvas, pacman):
-    for i in range(0, len(pacmanPath)):
-        newX = pacmanPath[i][0]
-        newY = pacmanPath[i][1]
-        canvas.move(pacman, 50*newX, 50*newY)
-        print(newX, newY)
-        window.update()
-        time.sleep(1)
 
 
 def main():
