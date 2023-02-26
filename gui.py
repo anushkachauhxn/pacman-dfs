@@ -39,6 +39,8 @@ class Board(Frame):
             pacman = create_pacman(
                 canvas, pacmanPath[progress][0], pacmanPath[progress][1])
             canvas.pack(fill=BOTH, expand=1)
+            self.master.update()
+            time.sleep(0.5)
 
             for i in range(progress+1, len(pacmanPath)):
                 print(i)
