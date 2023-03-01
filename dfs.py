@@ -2,6 +2,7 @@ import sys
 import os
 import numpy as np
 from queue import LifoQueue
+from gui import Board
 
 grid = []
 pacmanPath = []
@@ -57,8 +58,9 @@ def main():
         dfsTravel(next[0], next[1], vis1)
     if (not foodFound):
         print("Food not found")
-
     print(pacmanPath)
+
+    Board(grid, pacmanPath)
 
 
 if __name__ == '__main__':
